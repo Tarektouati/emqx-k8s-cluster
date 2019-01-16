@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: emqx
+  labels:
+    app: emqx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: emqx
+    spec:
+      serviceAccountName: emqx
+      containers:
+        - name: emqx
+          image: emqx/emqx:latest
+          ports:
+            - name: emqx-dashboard
+              containerPort: 18083
+            - name: emqx-mqtt
+              containerPort: 1883
+            - name: emqx-ws
+              containerPort: 9001
+          env:
+            - name: EMQX_LISTENER__WS__EXTERNAL
+              value: '9001'
+            - name: EMQX_CLUSTER__DISCOVERY
+              value: k8s
+            - name: EMQX_NAME
+              value: emqx
+            - name: EMQX_CLUSTER__K8S__APISERVER
+              value: https://$(KUBERNETES_SERVICE_HOST):$(KUBERNETES_PORT_443_TCP_PORT)
+            - name: EMQX_CLUSTER__K8S__NAMESPACE
+              value: default
+            - name: EMQX_CLUSTER__K8S__SERVICE_NAME
+              value: emqx
+            - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
+              value: ip
+            - name: EMQX_CLUSTER__K8S__APP_NAME
+              value: emqx
+          tty: true

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emqx
+spec:
+  ports:
+    - port: 32333
+      name: emqx-dashboard
+      nodePort: 32333
+      targetPort: emqx-dashboard
+      protocol: TCP
+    - port: 30010
+      name: emqx-mqtt
+      nodePort: 30010
+      targetPort: emqx-mqtt
+      protocol: TCP
+    - port: 30011
+      name: emqx-ws
+      nodePort: 30011
+      targetPort: emqx-ws
+      protocol: TCP
+  selector:
+    app: emqx
+  type: NodePort
